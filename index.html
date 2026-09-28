@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#f3efe5" />
+<title>今晚去哈尔滨哪里？</title>
+<style>
+:root{--bg:#f3efe5;--ink:#171717;--muted:#6f6a60;--card:#fffdf7;--line:#d8d1c3;--accent:#e4482d;--green:#1d6b52}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:28px 18px 48px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:42px}.brand{font-weight:900;letter-spacing:.08em}.count{font-size:13px;color:var(--muted)}
+.hero{margin-bottom:22px}.eyebrow{font-size:13px;color:var(--accent);font-weight:800;letter-spacing:.16em;margin-bottom:12px}.hero h1{font-family:Georgia,"Noto Serif SC",serif;font-size:clamp(40px,11vw,72px);line-height:.98;margin:0 0 18px;letter-spacing:-.04em}.hero p{color:var(--muted);line-height:1.8;margin:0;max-width:560px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 10px 30px rgba(30,20,0,.05)}.district{font-size:13px;color:var(--green);font-weight:800}.place{font-family:Georgia,"Noto Serif SC",serif;font-size:34px;font-weight:800;margin:7px 0 10px}.desc{color:var(--muted);line-height:1.7;min-height:54px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.meta div{border-top:1px solid var(--line);padding-top:12px}.meta b{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.meta span{font-weight:700}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{appearance:none;border:0;border-radius:14px;padding:15px 14px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center}.primary{background:var(--ink);color:white}.secondary{background:#ebe5d8;color:var(--ink)}.check{margin-top:10px;width:100%;background:transparent;border:1px solid var(--line);color:var(--green)}
+.rule{display:flex;gap:12px;align-items:center;margin:24px 2px;color:var(--muted);font-size:13px}.rule:before,.rule:after{content:"";height:1px;background:var(--line);flex:1}.history h2{font-size:15px;margin:0 0 12px}.history-list{display:flex;flex-direction:column;gap:8px}.history-item{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.35);font-size:14px}.history-item span:last-child{color:var(--muted);white-space:nowrap}.empty{font-size:14px;color:var(--muted)}
+.footer{margin-top:30px;font-size:12px;line-height:1.7;color:var(--muted)}
+@media(max-width:520px){.wrap{padding-top:20px}.top{margin-bottom:32px}.card{padding:20px}.place{font-size:30px}.actions{grid-template-columns:1fr}.meta{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top"><div class="brand">哈尔滨随机漫游</div><div class="count" id="count"></div></header>
+  <section class="hero"><div class="eyebrow">TONIGHT · HARBIN</div><h1>今晚，<br>去一个没计划的地方。</h1><p>不抽景点，只抽一片城市。到了以后别规划路线，随便选一条街开始走。</p></section>
+  <section class="card">
+    <div class="district" id="district">—</div>
+    <div class="place" id="place">点击开始随机</div>
+    <div class="desc" id="desc">范围控制在哈尔滨主城区，以街区、道路和生活片区为主。</div>
+    <div class="meta"><div><b>建议漫游</b><span id="radius">—</span></div><div><b>今晚任务</b><span id="mission">—</span></div></div>
+    <div class="actions"><button class="btn primary" id="randomBtn">🎲 随机今晚目的地</button><a class="btn secondary" id="mapBtn" href="#" target="_blank" rel="noopener">在地图中搜索</a></div>
+    <button class="btn check" id="checkBtn">✓ 我来过了，打卡</button>
+  </section>
+  <div class="rule">不要连续重抽，第一抽才算数</div>
+  <section class="history"><h2>最近打卡</h2><div class="history-list" id="history"></div></section>
+  <div class="footer">提示：这里只给一个“大致区域”，不是导航终点。夜间出行请自行避开施工路段、封闭区域、江边偏僻路段等不适合步行的位置。</div>
+</main>
+<script>
+const places=[
+['道里区','安字片','安国街、安发街、安升街一带','1–1.5 km'],
+['道里区','经纬街片区','经纬街向周边小街自由穿行','1–1.5 km'],
+['道里区','工程街片区','工程街、工部街与友谊路内侧','1–1.5 km'],
+['道里区','顾乡片区','顾乡大街与康安路周边生活区','1.5–2 km'],
+['道里区','群力第五大道片区','群力第五大道与丽江路周边','1.5–2 km'],
+['道里区','群力第六大道片区','第六大道向周边住宅街区漫游','1.5–2 km'],
+['道里区','群力外滩片区','群力大道靠近江侧的城市街区','1.5–2 km'],
+['道里区','河松片区','河松街、河鼓街周边','1–1.5 km'],
+['道里区','建国街片区','建国街与通达街附近老城区','1–1.5 km'],
+['道里区','抚顺街片区','抚顺街与安发街周边','1–1.5 km'],
+['南岗区','果戈里大街片区','果戈里大街向东西两侧小街延伸','1–1.5 km'],
+['南岗区','花园街片区','花园街、龙江街周边老街区','1–1.5 km'],
+['南岗区','文昌街片区','文昌街与宣化街之间自由走','1–1.5 km'],
+['南岗区','和兴路片区','和兴路、清滨路周边','1.5–2 km'],
+['南岗区','学府路片区','学府路大学区周边街道','1.5–2 km'],
+['南岗区','哈西片区','中兴大道与哈西大街周边','1.5–2 km'],
+['南岗区','王岗片区','哈双路与王岗生活区周边','1–1.5 km'],
+['南岗区','辽河片区','辽河路与红旗大街周边','1–1.5 km'],
+['南岗区','会展片区','长江路与红旗大街周边','1.5–2 km'],
+['南岗区','先锋路片区','先锋路与宣化街周边','1–1.5 km'],
+['道外区','靖宇街片区','靖宇街向南北两侧老街穿行','1–1.5 km'],
+['道外区','南十四道街片区','南十四道街与太古街附近','1–1.5 km'],
+['道外区','太古街片区','太古街与南勋街周边','1–1.5 km'],
+['道外区','北新街片区','北新街与江畔路附近城区','1–1.5 km'],
+['道外区','宏伟路片区','宏伟路与大有坊街周边','1.5–2 km'],
+['道外区','南直路片区','南直路与桦树街周边','1.5–2 km'],
+['道外区','东直路片区','东直路生活区随机穿行','1–1.5 km'],
+['道外区','红旗大街北段','红旗大街靠道外一侧周边','1.5–2 km'],
+['香坊区','三合路片区','三合路与健康路周边','1.5–2 km'],
+['香坊区','六顺街片区','六顺街、司徒街周边','1–1.5 km'],
+['香坊区','菜艺街片区','菜艺街与公滨路附近','1–1.5 km'],
+['香坊区','香坊大街片区','香坊大街与横道街周边','1–1.5 km'],
+['香坊区','乐松片区','三大动力路向周边居民区走','1.5–2 km'],
+['香坊区','哈平路片区','哈平路北段与幸福路周边','1.5–2 km'],
+['香坊区','进乡街片区','进乡街沿线生活区','1.5–2 km'],
+['香坊区','公滨路片区','公滨路与红旗大街周边','1.5–2 km'],
+['松北区','世茂大道片区','世茂大道与天翔街周边','1.5–2 km'],
+['松北区','松北一路片区','松北一路与松北大道附近','1.5–2 km'],
+['松北区','融创片区','世茂大道西侧城市街区','1.5–2 km'],
+['平房区','新疆大街片区','新疆大街与友协大街周边','1.5–2 km'],
+['平房区','友协大街片区','友协大街周边老生活区','1–1.5 km']
+];
+const missions=['拍一张最有哈尔滨味道的东西','找到一家从没见过的小店','走进一条平时绝不会走的小街','拍一张今晚最好看的灯光','找到一栋让你停下来的建筑','不看导航连续走 15 分钟','买一样没吃过的小东西','找一个适合坐十分钟的地方','记录今晚最有意思的一块招牌','沿着最热闹的方向走 20 分钟'];
+let current=null;
+const $=id=>document.getElementById(id);
+function randomPlace(){
+ const last=localStorage.getItem('lastPlace'); let pool=places.filter(p=>p[1]!==last); current=pool[Math.floor(Math.random()*pool.length)];
+ $('district').textContent=current[0]; $('place').textContent=current[1]; $('desc').textContent=current[2]; $('radius').textContent=current[3]; $('mission').textContent=missions[Math.floor(Math.random()*missions.length)];
+ $('mapBtn').href='https://uri.amap.com/search?keyword='+encodeURIComponent('哈尔滨 '+current[1]); localStorage.setItem('lastPlace',current[1]);
+}
+function renderHistory(){const arr=JSON.parse(localStorage.getItem('walkHistory')||'[]'); $('count').textContent=`已打卡 ${arr.length} 次`; $('history').innerHTML=arr.length?arr.slice(0,6).map(x=>`<div class="history-item"><span>${x.district} · ${x.place}</span><span>${x.date}</span></div>`).join(''):'<div class="empty">还没有记录。今晚可以是第一次。</div>'}
+$('randomBtn').onclick=randomPlace;
+$('checkBtn').onclick=()=>{if(!current)return alert('先随机一个地方。');let arr=JSON.parse(localStorage.getItem('walkHistory')||'[]');let d=new Date();arr.unshift({district:current[0],place:current[1],date:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`});localStorage.setItem('walkHistory',JSON.stringify(arr.slice(0,100)));renderHistory();$('checkBtn').textContent='✓ 今晚已打卡';setTimeout(()=>$('checkBtn').textContent='✓ 我来过了，打卡',1600)};
+renderHistory();
+</script>
+</body></html>
